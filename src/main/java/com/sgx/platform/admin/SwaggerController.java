@@ -12,7 +12,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import static springfox.documentation.builders.PathSelectors.regex;
 
 @RestController
-@RequestMapping("/admin")
+@RequestMapping("/restful/admin")
 @EnableSwagger2
 public class SwaggerController {
 
@@ -28,7 +28,7 @@ public class SwaggerController {
     @Bean
     public Docket swaggerSpringMvcPlugin() {
         ApiInfo apiInfo = new ApiInfo("Restful 项目首页", "Restful 项目说明", null, null, null, null, null);
-        Docket docket = new Docket(DocumentationType.SWAGGER_2).select().paths(regex("/.*")).build()
+        Docket docket = new Docket(DocumentationType.SWAGGER_2).select().paths(regex("/rest.*")).build()
                 .apiInfo(apiInfo).useDefaultResponseMessages(false);
         return docket;
     }
