@@ -3,13 +3,12 @@ package com.sgx.platform.domain.user;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.baomidou.mybatisplus.mapper.Wrapper;
 import com.baomidou.mybatisplus.plugins.Page;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,8 +17,9 @@ import java.util.List;
  * 代码生成器，参考源码测试用例：
  * 
  * /mybatis-plus/src/test/java/com/baomidou/mybatisplus/test/generator/MysqlGenerator.java
- *
+ *CrossOrigin加入跨域支持
  */
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/rest/user")
 public class UserController {
@@ -57,12 +57,20 @@ public class UserController {
 		return "Edit Sucess";
 	}
 
-
 	@RequestMapping(value = "/list",method = RequestMethod.GET)
 	@ApiOperation(value="列出所有用户", notes="列出所有用户")
-	public List<User> findAll() throws Exception {
+	public Object findAll(@ApiParam(required=true, name="callback", value="回掉函数")
+							  @RequestParam(name = "callback") String callback) throws Exception {
+		Object response = null;
 		Wrapper<User> wrapper = new EntityWrapper<User>();
-		return userService.selectList(wrapper);
+		Page<User> userPages = new Page<User>();
+		userPages.setRecords(userService.selectList(wrapper));
+		if(StringUtils.isEmpty(callback)){
+			response = userPages;
+		}else{
+			response = new JSONPObject(callback,userPages);
+		}
+		return response;
 	}
 
 }
